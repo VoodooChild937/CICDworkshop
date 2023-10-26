@@ -23,7 +23,7 @@ jobs:
           severity: 'CRITICAL'
           exit-code: 1
 
-      - name: Slack Notification
+      - name: Slack Notificatio
         if: failure()
         uses: rtCamp/action-slack-notify@v2
         env:
