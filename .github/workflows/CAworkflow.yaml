@@ -9,7 +9,7 @@ jobs:
     name: Build
     runs-on: ubuntu-20.04
     steps:
-      - name: Checkout code
+      - name: Checkout cod
         uses: actions/checkout@v2
 
       - name: Run Trivy vulnerability scanner
