@@ -83,5 +83,5 @@ jobs:
             Name: Tan Yibai
             Matriculation number: A0285886A
             Email: e1221698@u.nus.edu
-            Repository: ${{ secrets.SLACK_REPOSITORY }}
+            Git: ${{ secrets.SLACK_REPOSITORY }}
             Docker Hub URL: https://hub.docker.com/r/tanyibai/cicd_workshop
