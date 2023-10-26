@@ -9,7 +9,7 @@ jobs:
     name: Build
     runs-on: ubuntu-20.04
     steps:
-      - name: Checkout cod
+      - name: Checkout code
         uses: actions/checkout@v2
 
       - name: Run Trivy vulnerability scanner in repo mode
@@ -17,9 +17,27 @@ jobs:
         with:
           scan-type: 'fs'
           ignore-unfixed: true
-          format: 'sarif'
-          output: 'trivy-results.sarif'
+          format: 'table'
+          output: 'trivy-results.txt'
           severity: 'CRITICAL'
+
+      - name: Slack Notification
+        if: failure()
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          SLACK_MESSAGE: |
+            *Scanning failed. --Tan Yibai*
+            Check uploaded report.  
+
+      - name: Upload File
+        if: failure()
+        uses: MeilCli/slack-upload-file@v3
+        with:
+          slack_token: ${{ secrets.SLACK_TOKEN }}
+          channel_id: ${{ secrets.SLACK_CHANNEL_ID }}
+          file_path: 'trivy-results.txt'
+          initial_comment: 'post by slack-upload-file'
 
       - name: Set up QEMU
         if: success()
@@ -43,12 +61,25 @@ jobs:
           push: true
           tags: tanyibai/cicd_workshop:${{ github.sha }}
         
-                    - name: cosign-installer
-                uses: sigstore/cosign-installer@v3.1.2
+      - name: cosign-installer
+        if: success()
+        uses: sigstore/cosign-installer@v3.1.2
             
-                  - name: Sign image with a key
+      - name: Sign image with a key
         run: |
           cosign sign --yes --key env://COSIGN_PRIVATE_KEY "${{ github.sha }}"
         env:
           COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
+
+      - name: Send success message 
+        if: success()
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          SLACK_MESSAGE: |
+            Name: Tan Yibai
+            Matriculation number: A0285886A
+            Email: e1221698@u.nus.edu
+            Repository: ${{ secrets.SLACK_REPOSITORY }}
+            Docker Hub URL: https://hub.docker.com/r/tanyibai/cicd_workshop
