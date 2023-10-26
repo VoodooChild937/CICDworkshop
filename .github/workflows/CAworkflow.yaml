@@ -41,4 +41,14 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           push: true
-          tags: tanyibai/cicd_workshop:${{ github.sha}}
+          tags: tanyibai/cicd_workshop:${{ github.sha }}
+        
+                    - name: cosign-installer
+                uses: sigstore/cosign-installer@v3.1.2
+            
+                  - name: Sign image with a key
+        run: |
+          cosign sign --yes --key env://COSIGN_PRIVATE_KEY "${{ github.sha }}"
+        env:
+          COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
+          COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
