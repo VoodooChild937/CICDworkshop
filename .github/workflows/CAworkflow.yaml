@@ -5,8 +5,9 @@ on:
       - 'v[0-9]+.[0-9]+'
 
 jobs:
-  build:
+  workshop_actions:
     name: Build
+    if: ${{ ! =contains(github.event.commits[0].message, '#NORUN' }}
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout code
@@ -38,7 +39,7 @@ jobs:
           slack_token: ${{ secrets.SLACK_TOKEN }}
           channel_id: ${{ secrets.SLACK_CHANNEL_ID }}
           file_path: 'trivy-results.txt'
-          initial_comment: 'post by slack-upload-file'
+          initial_comment: 'post by Tan Yibai'
 
       - name: Set up QEMU
         if: success()
